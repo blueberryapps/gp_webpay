@@ -18,8 +18,13 @@ Or install it yourself as:
 
 ## Usage
 
+Generate own certificate, put into your repository.
+
+### Initialize
+
+config/initializers/gp_webpay.rb
+
 ```ruby
-# Configures global settings for Kaminari
 GpWebpay.configure do |config|
   config.merchant_number = ##########
   config.pem_path        = 'my_cert.pem'
@@ -27,7 +32,36 @@ GpWebpay.configure do |config|
 end
 ```
 
-TODO: Write usage instructions here
+### Payment
+
+```ruby
+class Payment
+  include GpWebpay::Payment
+
+  def order_number
+    id
+  end
+
+  def amount_in_cents
+    100
+  end
+
+  def currency
+    840 # USD
+  end
+end
+```
+
+### Controller
+```ruby
+class OrdersController
+  def create
+    ...
+    payment = Payment.create
+    redirect_to payment.pay_url(redirect_url: 'http://app/callback')
+  end
+end
+```
 
 ## Development
 
