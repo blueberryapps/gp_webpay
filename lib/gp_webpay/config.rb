@@ -21,17 +21,28 @@ module GpWebpay
     config_accessor :merchant_pem_path
     config_accessor :merchant_password
     config_accessor :gpe_pem_path
+    config_accessor :environment
 
     def param_name
       config.param_name.respond_to?(:call) ? config.param_name.call : config.param_name
     end
 
     def pay_url
-      if Rails.env.production?
+      if production?
         'https://3dsecure.gpwebpay.com/kb/order.do'
       else
         'https://test.3dsecure.gpwebpay.com/kb/order.do'
       end
+    end
+
+    def gpe_pem_path
+      file_name = production? ? 'muzo.signing_prod.pem' : 'muzo.signing_test.pem'
+
+      File.expand_path("../../../certs/#{file_name}", __FILE__)
+    end
+
+    def production?
+      config.environment == 'production'
     end
 
     # define param_name writer (copied from AS::Configurable)
@@ -42,9 +53,9 @@ module GpWebpay
 
   # this is ugly. why can't we pass the default value to config_accessor...?
   configure do |config|
-    config.merchant_number = nil
-    config.merchant_pem_path = nil
-    config.merchant_password = nil
-    config.gpe_pem_path = 'certs/muzo.signing_test.pem'
+    config.merchant_number    = nil
+    config.merchant_pem_path  = nil
+    config.merchant_password  = nil
+    config.environment        = defined?(Rails) && Rails.env || 'test'
   end
 end
