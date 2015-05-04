@@ -4,6 +4,16 @@ module GpWebpay
 
     included do
       attr_accessor :redirect_url
+
+      delegate :merchant_number, to: :config
+    end
+
+    def deposit_flag
+      1
+    end
+
+    def operation
+      'CREATE_ORDER'
     end
 
     def pay_url(options = {})
@@ -18,18 +28,6 @@ module GpWebpay
     end
 
     private
-
-    def order_number
-      raise NotImplementedError
-    end
-
-    def payment_amount_in_cents
-      raise NotImplementedError
-    end
-
-    def payment_currency
-      raise NotImplementedError
-    end
 
     def config
       GpWebpay.config
@@ -54,15 +52,7 @@ module GpWebpay
     end
 
     def payment_attributes
-      {
-        'MERCHANTNUMBER' => config.merchant_number,
-        'OPERATION'      => 'CREATE_ORDER',
-        'ORDERNUMBER'    => order_number,
-        'AMOUNT'         => payment_amount_in_cents,
-        'CURRENCY'       => payment_currency,
-        'DEPOSITFLAG'    => 1,
-        'URL'            => redirect_url
-      }
+      @payment_attributes ||= PaymentAttributes.new(self).to_h
     end
 
     def payment_attributes_with_digest
