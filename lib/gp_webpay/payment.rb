@@ -4,12 +4,14 @@ module GpWebpay
 
     included do
       attr_accessor :redirect_url
-
-      delegate :merchant_number, to: :config
     end
 
     def deposit_flag
       1
+    end
+
+    def merchant_number
+      config.merchant_number
     end
 
     def operation
