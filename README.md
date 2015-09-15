@@ -26,9 +26,9 @@ config/initializers/gp_webpay.rb
 
 ```ruby
 GpWebpay.configure do |config|
-  config.merchant_number = ##########
-  config.pem_path        = 'my_cert.pem'
-  config.password        = 'password'
+  config.merchant_number   = ##########
+  config.merchant_pem_path = 'my_cert.pem'
+  config.merchant_password = 'password'
 end
 ```
 
@@ -58,7 +58,18 @@ class OrdersController
   def create
     ...
     payment = Payment.create
-    redirect_to payment.pay_url(redirect_url: 'http://app/callback')
+    redirect_to payment.pay_url(redirect_url: 'http://example.com/orders/callback')
+  end
+
+  def callback
+    ...
+    payment = Payment.find(params['ORDERNUMBER'])
+    if payment.success?(params)
+      # Payment success
+    else
+      # Payment failed
+      # params['PRCODE'], params['SRCODE']
+    end
   end
 end
 ```
