@@ -72,7 +72,7 @@ module GpWebpay
 
     def merchant_key
       @merchant_key ||= begin
-        pem = File.read config.merchant_pem_path
+        pem = config.merchant_pem || File.read(config.merchant_pem_path)
         OpenSSL::PKey::RSA.new(pem, config.merchant_password)
       end
     end
