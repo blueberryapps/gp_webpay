@@ -18,6 +18,7 @@ module GpWebpay
   class Configuration #:nodoc:
     include ActiveSupport::Configurable
     config_accessor :merchant_number
+    config_accessor :merchant_pem
     config_accessor :merchant_pem_path
     config_accessor :merchant_password
     config_accessor :gpe_pem_path
@@ -54,6 +55,7 @@ module GpWebpay
   # this is ugly. why can't we pass the default value to config_accessor...?
   configure do |config|
     config.merchant_number    = nil
+    config.merchant_pem       = nil
     config.merchant_pem_path  = nil
     config.merchant_password  = nil
     config.environment        = defined?(Rails) && Rails.env || 'test'
