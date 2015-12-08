@@ -23,7 +23,7 @@ class ConfigTest < Minitest::Spec
   end
 
   describe 'production environment' do
-    it 'return test url' do
+    it 'return production url' do
       config.stub :production?, true do
         assert config.pay_url == 'https://3dsecure.gpwebpay.com/kb/order.do'
         assert config.gpe_pem_path.end_with? 'certs/muzo.signing_prod.pem'
