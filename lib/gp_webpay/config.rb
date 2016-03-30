@@ -17,12 +17,14 @@ module GpWebpay
   # need a Class for 3.0
   class Configuration #:nodoc:
     include ActiveSupport::Configurable
-    config_accessor :merchant_number
-    config_accessor :merchant_pem
-    config_accessor :merchant_pem_path
-    config_accessor :merchant_password
-    config_accessor :gpe_pem_path
-    config_accessor :environment
+    config_accessor :merchant_number do nil; end
+    config_accessor :merchant_pem do nil; end
+    config_accessor :merchant_pem_path do nil; end
+    config_accessor :merchant_password do nil; end
+    config_accessor :gpe_pem_path do nil; end
+    config_accessor :environment do
+      defined?(Rails) && Rails.env || 'test'
+    end
 
     def param_name
       config.param_name.respond_to?(:call) ? config.param_name.call : config.param_name
@@ -50,14 +52,5 @@ module GpWebpay
     writer, line = 'def param_name=(value); config.param_name = value; end', __LINE__
     singleton_class.class_eval writer, __FILE__, line
     class_eval writer, __FILE__, line
-  end
-
-  # this is ugly. why can't we pass the default value to config_accessor...?
-  configure do |config|
-    config.merchant_number    = nil
-    config.merchant_pem       = nil
-    config.merchant_pem_path  = nil
-    config.merchant_password  = nil
-    config.environment        = defined?(Rails) && Rails.env || 'test'
   end
 end
