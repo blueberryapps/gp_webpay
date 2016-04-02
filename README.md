@@ -46,8 +46,26 @@ class Payment
     100
   end
 
+  ##
+  # implement this method if multiple types of payments required, otherwise default to normal one-time payment
+  #
+  # allows for 2 types:
+  #   default -> normal one-time payment
+  #   recurring -> master + recurring payments
+  ##
+  def payment_type
+    case variable
+    when one
+      return 'master'
+    when two
+      return 'recurring'
+    else
+      'default'
+    end
+  end
+
   def currency
-    840 # USD
+    840 # CZK = 203, EUR = 978, GBP = 826, HUF = 348, PLN = 985, RUB = 643, USD = 840
   end
 end
 ```

@@ -10,6 +10,19 @@ module GpWebpay
       1
     end
 
+    def user_param
+      'R'
+    end
+
+    def payment_type
+      'default'
+    end
+
+    # TODO remove unused
+    # def type?(compared_type)
+    #   payment_type == compared_type
+    # end
+
     def merchant_number
       config.merchant_number
     end
