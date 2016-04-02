@@ -18,11 +18,6 @@ module GpWebpay
       'default'
     end
 
-    # TODO remove unused
-    # def type?(compared_type)
-    #   payment_type == compared_type
-    # end
-
     def merchant_number
       config.merchant_number
     end
