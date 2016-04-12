@@ -38,6 +38,14 @@ module GpWebpay
       end
     end
 
+    def web_services_url
+      if production?
+        'https://3dsecure.gpwebpay.com/pay-ws/PaymentService'
+      else
+        'https://test.3dsecure.gpwebpay.com/pay-ws/PaymentService'
+      end
+    end
+
     def gpe_pem_path
       file_name = production? ? 'muzo.signing_prod.pem' : 'muzo.signing_test.pem'
 
