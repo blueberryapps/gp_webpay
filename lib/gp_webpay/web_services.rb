@@ -2,13 +2,13 @@ require 'nokogiri'
 require 'curb'
 require 'active_support/core_ext/hash'
 require 'gp_webpay/web_services/template'
+require 'gp_webpay/web_services/response'
 
 module GpWebpay
   module WebServices
     extend ActiveSupport::Concern
 
     def send_request(request_xml)
-      puts request_xml
       request = Curl::Easy.new(config.web_services_url)
       request.headers['Content-Type'] = 'text/xml;charset=UTF-8'
       request.http_post(request_xml)
@@ -63,7 +63,12 @@ module GpWebpay
     private
 
     def get_params_from(response)
-      Hash.from_xml(Nokogiri::XML(response).to_s)['Envelope']['Body']
+      hash_response = Hash.from_xml(Nokogiri::XML(response).to_s)['Envelope']['Body']
+      first_lvl_key = hash_response.keys.first
+      hash_response = hash_response["#{first_lvl_key}"]
+      second_lvl_key = hash_response.keys.last
+      hash_response = hash_response["#{second_lvl_key}"]
+      GpWebpay::WebServices::Response.new(hash_response)
     end
 
     def config
@@ -78,12 +83,8 @@ module GpWebpay
       @pay_attributes ||= PaymentAttributes.new(self, true).to_h
     end
 
-    def ws_verification_attrs
-      %w(OPERATION ORDERNUMBER PRCODE SRCODE RESULTTEXT)
-    end
-
     def ws_verification
-      ::GpWebpay::Verification.new(ws_attributes, ws_verification_attrs)
+      ::GpWebpay::Verification.new(ws_attributes)
     end
   end
 end

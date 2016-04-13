@@ -1,6 +1,6 @@
 module GpWebpay
   class Verification
-    def initialize(payment_attributes, verification_attrs)
+    def initialize(payment_attributes, verification_attrs=nil)
       @payment_attributes = payment_attributes
       @verification_attrs = verification_attrs
     end
@@ -15,7 +15,6 @@ module GpWebpay
     end
 
     def digest
-      puts digest_text
       sign = merchant_key.sign(OpenSSL::Digest::SHA1.new, digest_text)
       Base64.encode64(sign).gsub("\n", '')
     end
@@ -27,7 +26,6 @@ module GpWebpay
     end
 
     def digest_text
-      puts @payment_attributes.inspect
       @payment_attributes.values.join('|')
     end
 
