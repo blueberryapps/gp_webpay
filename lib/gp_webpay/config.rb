@@ -30,9 +30,9 @@ module GpWebpay
 
     def pay_url
       if production?
-        'https://3dsecure.gpwebpay.com/kb/order.do'
+        'https://3dsecure.gpwebpay.com/rb/order.do'
       else
-        'https://test.3dsecure.gpwebpay.com/kb/order.do'
+        'https://test.3dsecure.gpwebpay.com/rb/order.do'
       end
     end
 
