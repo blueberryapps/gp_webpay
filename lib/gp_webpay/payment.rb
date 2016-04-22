@@ -45,7 +45,7 @@ module GpWebpay
     end
 
     def digest_verification(params)
-      %w(OPERATION ORDERNUMBER PRCODE SRCODE RESULTTEXT).
+      %w(OPERATION ORDERNUMBER MERORDERNUM PRCODE SRCODE RESULTTEXT).
         map { |key| params[key] }.join('|')
     end
 
