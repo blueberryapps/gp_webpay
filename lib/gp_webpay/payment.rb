@@ -15,7 +15,7 @@ module GpWebpay
     end
 
     def payment_type
-      'default'
+      super || 'default'
     end
 
     def merchant_number

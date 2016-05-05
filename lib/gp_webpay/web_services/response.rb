@@ -5,7 +5,8 @@ module GpWebpay
 
       def initialize(data)
         @plain = data
-        
+
+        return unless data.respond_to?(:keys)
         data.keys.each do |key|
           define_singleton_method key.underscore do
             data[key]

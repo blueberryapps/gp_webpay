@@ -6,6 +6,8 @@ module GpWebpay
 
     WS_KEYS = %w(MESSAGEID BANKID MERCHANTNUMBER ORDERNUMBER)
 
+    RECCURING_KEYS = %w(MESSAGEID BANKID MERCHANTNUMBER ORDERNUMBER MASTERORDERNUMBER MERORDERNUM AMOUNT CURRENCY)
+
     OPTIONAL_KEYS = %w(MERORDERNUM DESCRIPTION MD)
 
     MASTER_KEYS = %w(USERPARAM1)
@@ -13,6 +15,7 @@ module GpWebpay
     TRANSITIONS = {
       'MERCHANTNUMBER' => :merchant_number,
       'ORDERNUMBER'    => :order_number,
+      'MASTERORDERNUMBER' => :master_order_number,
       'AMOUNT'         => :amount_in_cents,
       'DEPOSITFLAG'    => :deposit_flag,
       'MERORDERNUM'    => :merchant_order_number,
@@ -23,9 +26,10 @@ module GpWebpay
       'BANKID'         => :bank_id
     }
 
-    def initialize(payment, ws_flag = false)
+    def initialize(payment, ws_flag = false, type = '')
       @payment = payment
       @ws_flag = ws_flag
+      @type = type
     end
 
     def keys
@@ -37,7 +41,14 @@ module GpWebpay
           return KEYS
         end
       when 'recurring'
-        return WS_KEYS
+        case @type
+        when 'detail', 'state'
+          return WS_KEYS
+        when 'recurring'
+          return RECCURING_KEYS
+        else
+          return WS_KEYS # TBD
+        end
       else
         return KEYS.reject { |k| MASTER_KEYS.include?(k) }
       end

@@ -15,6 +15,10 @@ class Payment
     1001
   end
 
+  def payment_type
+    'default'
+  end
+
   def amount_in_cents
     100
   end

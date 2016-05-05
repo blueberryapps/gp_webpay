@@ -12,7 +12,6 @@ module GpWebpay
       request = Curl::Easy.new(config.web_services_url)
       request.headers['Content-Type'] = 'text/xml;charset=UTF-8'
       request.http_post(request_xml)
-      request.perform
       request
     end
 
@@ -29,27 +28,21 @@ module GpWebpay
     end
 
     def ws_process_recurring_payment
-      # send_request(template.process_recurring_payment(master_order))
+      attributes = request_attributes('recurring')
+      raw_response = send_request(template.process_recurring_payment(attributes)).body_str
+      get_params_from(raw_response)
     end
 
     def ws_get_order_detail
-      attributes = {
-        digest: ws_verification.digest,
-        order_number: order_number,
-        message_id: message_id,
-        merchant_number: config.merchant_number
-      }
-      get_params_from(send_request(template.get_order_detail(attributes)).body_str)
+      attributes = request_attributes('detail')
+      raw_response = send_request(template.get_order_detail(attributes)).body_str
+      get_params_from(raw_response)
     end
 
     def ws_get_order_state
-      attributes = {
-        digest: digest,
-        order_number: order_number,
-        message_id: message_id,
-        merchant_number: config.merchant_number
-      }
-      get_params_from(send_request(template.get_order_state(attributes)).body_str)
+      attributes = request_attributes('state')
+      raw_response = send_request(template.get_order_state(attributes)).body_str
+      get_params_from(raw_response)
     end
 
     def message_id
@@ -71,6 +64,19 @@ module GpWebpay
       GpWebpay::WebServices::Response.new(hash_response)
     end
 
+    def request_attributes(type = '')
+      {
+        digest: ws_verification(type).digest,
+        order_number: order_number,
+        message_id: message_id,
+        merchant_number: config.merchant_number,
+        currency: currency,
+        amount: amount_in_cents,
+        master_order_number: master_order_number,
+        merchant_order_number: merchant_order_number
+      }
+    end
+
     def config
       GpWebpay.config
     end
@@ -79,12 +85,12 @@ module GpWebpay
       GpWebpay::WebServices::Template.new
     end
 
-    def ws_attributes
-      @pay_attributes ||= PaymentAttributes.new(self, true).to_h
+    def ws_attributes(type)
+      PaymentAttributes.new(self, true, type).to_h
     end
 
-    def ws_verification
-      ::GpWebpay::Verification.new(ws_attributes)
+    def ws_verification(type)
+      ::GpWebpay::Verification.new(ws_attributes(type))
     end
   end
 end
