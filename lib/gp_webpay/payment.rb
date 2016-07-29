@@ -48,11 +48,8 @@ module GpWebpay
     end
 
     def digest_verification(params)
-      digest_attributes(params).map { |key| params[key] }.join('|')
-    end
-
-    def digest_attributes(params)
-      DIGEST_ALLOWED_ATTRIBUTES.reject { |k| !params.keys.include?(k) }
+      (DIGEST_ALLOWED_ATTRIBUTES & params.keys).
+        map { |key| params[key] }.join('|')
     end
 
     def digest1_verification(params)

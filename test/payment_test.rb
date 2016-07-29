@@ -12,19 +12,19 @@ class PaymentTest < Minitest::Spec
     assert payment.respond_to?(:success?)
   end
 
-  describe '#digest_attributes' do
+  describe '#digest_verification' do
     let(:params) do
       {
-        'OPERATION'      => 'CREATE_ORDER',
-        'ORDERNUMBER'    => 1001,
-        'MERORDERNUM'    => '123d',
-        'test'           => 'test'
+        'ORDERNUMBER' => 1001,
+        'MERORDERNUM' => '123d',
+        'OPERATION'   => 'CREATE_ORDER',
+        'test'        => 'test'
       }
     end
-    let(:expected_attributes) { ['OPERATION', 'ORDERNUMBER', 'MERORDERNUM'] }
 
-    it 'filters only allowed attributes' do
-      assert_equal payment.send(:digest_attributes, params), expected_attributes
+    it 'filters only properly sorted allowed attributes' do
+      assert_equal payment.send(:digest_verification, params),
+                   'CREATE_ORDER|1001|123d'
     end
   end
 end
