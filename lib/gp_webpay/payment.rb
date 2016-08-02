@@ -2,6 +2,9 @@ module GpWebpay
   module Payment
     extend ActiveSupport::Concern
 
+    DIGEST_ALLOWED_ATTRIBUTES = %w(OPERATION ORDERNUMBER MERORDERNUM PRCODE
+                                   SRCODE RESULTTEXT)
+
     included do
       attr_accessor :redirect_url
     end
@@ -45,7 +48,7 @@ module GpWebpay
     end
 
     def digest_verification(params)
-      %w(OPERATION ORDERNUMBER PRCODE SRCODE RESULTTEXT).
+      (DIGEST_ALLOWED_ATTRIBUTES & params.keys).
         map { |key| params[key] }.join('|')
     end
 
