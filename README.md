@@ -29,6 +29,17 @@ GpWebpay.configure do |config|
   config.merchant_number   = ##########
   config.merchant_pem_path = 'my_cert.pem'
   config.merchant_password = 'password'
+  # config.gp_webpay_bank    = :kb # :rb
+end
+```
+
+You can also use this GEM for integration with CSOB
+
+```ruby
+GpWebpay.configure do |config|
+  config.merchant_number = ENV['MERCHANT_NUMBER']
+  config.merchant_pem    = ENV['MERCHANT_PEM']
+  config.provider        = :csob
 end
 ```
 
