@@ -5,7 +5,7 @@ module GpWebpay
   #   GpWebpay.configure do |config|
   #     config.default_per_page = 10
   #   end
-  def self.configure(&block)
+  def self.configure(&_block)
     yield @config ||= GpWebpay::Configuration.new
   end
 

@@ -37,7 +37,7 @@ module GpWebpay
 
     def digest
       sign = merchant_key.sign(OpenSSL::Digest::SHA1.new, digest_text)
-      Base64.encode64(sign).gsub("\n", '')
+      Base64.encode64(sign).delete("\n")
     end
 
     def digest_text
