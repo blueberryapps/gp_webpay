@@ -1,8 +1,8 @@
-require 'nokogiri'
-require 'curb'
-require 'active_support/core_ext/hash'
-require 'gp_webpay/web_services/template'
-require 'gp_webpay/web_services/response'
+require "nokogiri"
+require "curb"
+require "active_support/core_ext/hash"
+require "gp_webpay/web_services/template"
+require "gp_webpay/web_services/response"
 
 module GpWebpay
   module WebServices
@@ -10,7 +10,7 @@ module GpWebpay
 
     def send_request(request_xml)
       request = Curl::Easy.new(config.web_services_url)
-      request.headers['Content-Type'] = 'text/xml;charset=UTF-8'
+      request.headers["Content-Type"] = "text/xml;charset=UTF-8"
       request.http_post(request_xml)
       request
     end
@@ -28,19 +28,25 @@ module GpWebpay
     end
 
     def ws_process_recurring_payment
-      attributes = request_attributes('recurring')
+      attributes = request_attributes("recurring")
       raw_response = send_request(template.process_recurring_payment(attributes)).body_str
       get_params_from(raw_response)
     end
 
+    def ws_process_regular_subscription_payment
+      attributes = request_attributes("regular_subscription")
+      raw_response = send_request(template.process_regular_subscription_payment(attributes)).body_str
+      get_params_from(raw_response)
+    end
+
     def ws_get_order_detail
-      attributes = request_attributes('detail')
+      attributes = request_attributes("detail")
       raw_response = send_request(template.get_order_detail(attributes)).body_str
       get_params_from(raw_response)
     end
 
     def ws_get_order_state
-      attributes = request_attributes('state')
+      attributes = request_attributes("state")
       raw_response = send_request(template.get_order_state(attributes)).body_str
       get_params_from(raw_response)
     end
@@ -50,13 +56,13 @@ module GpWebpay
     end
 
     def bank_id
-      '0100'
+      "0100"
     end
 
     private
 
     def get_params_from(response)
-      hash_response = Hash.from_xml(Nokogiri::XML(response).to_s)['Envelope']['Body']
+      hash_response = Hash.from_xml(Nokogiri::XML(response).to_s)["Envelope"]["Body"]
       first_lvl_key = hash_response.keys.first
       hash_response = hash_response["#{first_lvl_key}"]
       second_lvl_key = hash_response.keys.last
@@ -64,7 +70,7 @@ module GpWebpay
       GpWebpay::WebServices::Response.new(hash_response)
     end
 
-    def request_attributes(type = '')
+    def request_attributes(type = "")
       {
         digest: ws_verification(type).digest,
         order_number: order_number,
@@ -73,7 +79,7 @@ module GpWebpay
         currency: currency,
         amount: amount_in_cents,
         master_order_number: master_order_number,
-        merchant_order_number: merchant_order_number
+        merchant_order_number: merchant_order_number,
       }
     end
 

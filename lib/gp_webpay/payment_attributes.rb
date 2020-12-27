@@ -1,6 +1,5 @@
 module GpWebpay
   class PaymentAttributes
-
     KEYS = %w(MERCHANTNUMBER OPERATION ORDERNUMBER AMOUNT CURRENCY DEPOSITFLAG URL DESCRIPTION MD USERPARAM1)
 
     WS_KEYS = %w(MESSAGEID BANKID MERCHANTNUMBER ORDERNUMBER)
@@ -12,20 +11,20 @@ module GpWebpay
     MASTER_KEYS = %w(USERPARAM1)
 
     TRANSITIONS = {
-      'MERCHANTNUMBER' => :merchant_number,
-      'ORDERNUMBER'    => :order_number,
-      'MASTERORDERNUMBER' => :master_order_number,
-      'AMOUNT'         => :amount_in_cents,
-      'DEPOSITFLAG'    => :deposit_flag,
-      'MERORDERNUM'    => :merchant_order_number,
-      'URL'            => :redirect_url,
-      'MD'             => :merchant_description,
-      'USERPARAM1'     => :user_param,
-      'MESSAGEID'      => :message_id,
-      'BANKID'         => :bank_id
+      "MERCHANTNUMBER" => :merchant_number,
+      "ORDERNUMBER" => :order_number,
+      "MASTERORDERNUMBER" => :master_order_number,
+      "AMOUNT" => :amount_in_cents,
+      "DEPOSITFLAG" => :deposit_flag,
+      "MERORDERNUM" => :merchant_order_number,
+      "URL" => :redirect_url,
+      "MD" => :merchant_description,
+      "USERPARAM1" => :user_param,
+      "MESSAGEID" => :message_id,
+      "BANKID" => :bank_id,
     }
 
-    def initialize(payment, ws_flag = false, type = '')
+    def initialize(payment, ws_flag = false, type = "")
       @payment = payment
       @ws_flag = ws_flag
       @type = type
@@ -33,17 +32,19 @@ module GpWebpay
 
     def keys
       case @payment.payment_type
-      when 'master'
+      when "master"
         if @ws_flag
           return WS_KEYS
         else
           return KEYS
         end
-      when 'recurring'
+      when "recurring"
         case @type
-        when 'detail', 'state'
+        when "detail", "state"
           return WS_KEYS
-        when 'recurring'
+        when "recurring"
+          return RECCURING_KEYS
+        when "regular_subscription"
           return RECCURING_KEYS
         else
           return WS_KEYS # TBD
